@@ -9,8 +9,11 @@ import java.util.regex.Pattern;
 
 import textio.TextIO;
 
+//TODO:
+// - Handle double characters 
+
 public class Wordle {
-    static final int wordLength = 5;
+    static final int wordLength = 5; //All words are 5 characters
     
     public static void main(String[] args) throws FileNotFoundException, IOException { //Main program
         ArrayList<String> wordList = new ArrayList<String>();
@@ -24,9 +27,11 @@ public class Wordle {
                 }
             }
         }
+		
+		//Build our character freqency table
+        int charCount[] = characterFreqCounter(wordList);
 
-        int charCount[] = letterCounter(wordList);
-
+		// Loop for 5 attempts
         int attemptCounter = 0;
         while(attemptCounter < 6){
             System.out.println("***Attempt: " + attemptCounter++);
@@ -38,7 +43,8 @@ public class Wordle {
         }
     }
 
-    public static int[] letterCounter(ArrayList<String> countThis){
+    public static int[] characterFreqCounter(ArrayList<String> countThis){
+		//Sums the freqency of every unique character
         int charCount[] = new int[40]; 
         for (String s:countThis) {
             for (char ch:s.toCharArray()) {
@@ -49,6 +55,7 @@ public class Wordle {
     }
 
     public static void sortList(ArrayList<String> sortThis, int[] scoreTable){
+		//Sort the option list by the freqency of the characters compared to our freqency table
         Collections.sort(sortThis, new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
@@ -58,6 +65,7 @@ public class Wordle {
     }
 
     public static int countScore(String aWord, int[] scoreTable){
+		//create a score based on the sum of our characters freqency
         int score = 0;
         for (char ch:aWord.toCharArray()) {
             score = score + scoreTable[Character.getNumericValue(ch)];
@@ -66,6 +74,7 @@ public class Wordle {
     }
 
     public static void printer(ArrayList<String> printThis, int[] charCount){
+		//print out the potential list
         System.out.println(printThis.size() + " options to pick:");
         for ( int i = 0; i < printThis.size(); ) {
             System.out.print(printThis.get(i) + "\t");
