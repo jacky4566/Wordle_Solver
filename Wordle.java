@@ -11,6 +11,7 @@ import textio.TextIO;
 
 //TODO:
 // - Handle double characters 
+// - Remove known characters in wrong place
 
 public class Wordle {
     static final int wordLength = 5; //All words are 5 characters
