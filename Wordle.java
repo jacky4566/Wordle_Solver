@@ -36,7 +36,7 @@ public class Wordle {
         int attemptCounter = 0;
         while(attemptCounter < 6){
             System.out.println("***Attempt: " + attemptCounter++);
-            wordList = filterFixed(wordList);
+            filterFixed(wordList);
             filterUnFixed(wordList);
             filterNotIncluded(wordList);
             sortList(wordList, charCount);
@@ -86,43 +86,59 @@ public class Wordle {
         System.out.println("\n");        
     }
 
-    public static ArrayList<String> filterFixed(ArrayList<String> inputList){
-        //output array
-        ArrayList<String> output = new ArrayList<String>();
+    public static void filterFixed(ArrayList<String> inputList){
         //get input
         System.out.println("Input fixed positions");
         String filter = TextIO.getln();
         if (filter.length() != wordLength){
-            System.out.println("Must be of length: " + wordLength);
-            return inputList;
+            System.out.println(filter + " must be of length: " + wordLength);
+            return;
         }
         //replace spaces with wildcards in filter
         String regex = filter.replace(' ','.');
         //generate regex
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-        for (String s:inputList) {
-            if (pattern.matcher(s).matches()) {
-                output.add(s);
+        for( int i = 0; i < inputList.size(); i++ ){
+            if (!pattern.matcher(inputList.get(i)).matches()) {
+                inputList.remove(inputList.get(i));
+                i--;
             }
           }
-        return output;
+        return;
     }
 
     public static void filterUnFixed(ArrayList<String> inputList){
         System.out.println("Input unfixed knowns");
         String filter = TextIO.getln();
-        for (char ch:filter.toCharArray()) {
-            for( int i = 0; i < inputList.size(); i++ ){
-                if (!inputList.get(i).contains(String.valueOf(ch))){
-                    inputList.remove(i);
-                    i--;
+        //Check input
+        if (filter.length() != wordLength){
+            System.out.println(filter + " must be of length: " + wordLength);
+            return;
+        }
+        //remove words that dont contain target chars
+        for( int i = 0; i < filter.length(); i++ ){
+            char filterChar = filter.charAt(i);
+            if (filterChar != ' '){
+                for( int j = 0; j < inputList.size(); j++ ){
+                    //Remove words that dont have our target char
+                    if (!inputList.get(j).contains(String.valueOf(filterChar))){
+                        inputList.remove(j);
+                        j--;
+                    }
+                }
+                for( int j = 0; j < inputList.size(); j++ ){
+                    //Remove words that have our target char in the same position
+                    if (inputList.get(j).charAt(i) == filterChar){
+                        inputList.remove(j);
+                        j--;
+                    }
                 }
             }
         }
     }
 
     public static void filterNotIncluded(ArrayList<String> inputList){
-        System.out.println("Input not included letters");
+        System.out.println("Input not included letters, do not enter double letters");
         String filter = TextIO.getln();
         for (char ch:filter.toCharArray()) {
             for( int i = 0; i < inputList.size(); i++ ){
